@@ -1,20 +1,23 @@
 "use client";
 
+
 import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
-    SidebarGroup,
     SidebarHeader,
     SidebarTrigger
   } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { PencilIcon, Search } from "lucide-react";
+import { SidebarItems } from "./sidebar-items";
+
 
 export const AppSidebar = () => {
+    
     return (
-        <Sidebar className="bg-neutral-950 h-full">
-            <SidebarHeader className="bg-neutral-950 flex flex-row items-center justify-between" >
+        <Sidebar className="bg-[#0e0e0e] h-full">
+            <SidebarHeader className="bg-[#0e0e0e] flex flex-row items-center justify-between" >
                 <SidebarTrigger className="size-9 p-1.5 text-zinc-400" />
                 <div className="flex items-center gap-x-1">
                     <Button
@@ -33,11 +36,10 @@ export const AppSidebar = () => {
                     </Button>
                 </div>
             </SidebarHeader>
-            <SidebarContent className="bg-neutral-950">
-                <SidebarGroup />
-                <SidebarGroup />
+            <SidebarContent className="bg-[#0e0e0e] px-1">
+                <SidebarItems/>
             </SidebarContent>
-            <SidebarFooter className="bg-neutral-950" />
+            <SidebarFooter className="bg-[#0e0e0e]" />
         </Sidebar>
     )
 }

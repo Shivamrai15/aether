@@ -2,8 +2,10 @@ import { NextResponse } from "next/server";
 import { InputSchema } from "@/schemas/input.schema";
 import { createChain } from "@/lib/chain";
 import { db } from "@/lib/db";
-import { Role } from "@prisma/client";
+import { Chat, Role } from "@prisma/client";
 
+
+const BATCH = 10
 
 export async function POST ( req: Request ) {
     try {
@@ -15,26 +17,21 @@ export async function POST ( req: Request ) {
             return new NextResponse("Invalid input fields", {status: 401});
         }
 
-        const { chatId, input } = validatedData.data;
+        const { chatId, input, newChat } = validatedData.data;
         const chain = await createChain(chatId);
 
-        let newChatId : string = "";
-        if (!chatId) {
-            const chat = await db.chat.create({
+        if (newChat) {
+            await db.chat.create({
                 data : {
+                    id: chatId,
                     title : input
                 }
             });
-            newChatId = chat.id;
-        }
-
-        if (!chatId && !newChatId) {
-            return new NextResponse("Chat ID is missing", { status: 400 });
         }
 
         await db.message.create({
             data : {
-                chatId : chatId||newChatId,
+                chatId : chatId,
                 content : input,
                 role : Role.USER,
             }
@@ -53,7 +50,7 @@ export async function POST ( req: Request ) {
 
                 await db.message.create({
                     data : {
-                        chatId : chatId||newChatId,
+                        chatId : chatId,
                         content : aiMessage,
                         role : Role.ASSISTANT
                     }
@@ -74,5 +71,49 @@ export async function POST ( req: Request ) {
     } catch (error) {
         console.log("CHAT POST API ERROR", error);
         return new NextResponse("Internal server error", { status: 500 });
+    }
+}
+
+
+export async function GET ( req: Request ) {
+    try {
+        
+        const { searchParams } = new URL(req.url);
+        const cursor = searchParams.get("cursor");
+
+        let chats : Chat[]=[];
+        if (cursor) {
+            chats = await db.chat.findMany({
+                cursor : {
+                    id : cursor
+                },
+                skip : 1,
+                take : BATCH,
+                orderBy : {
+                    createdAt : "desc"
+                }
+            });
+        } else {
+            chats = await db.chat.findMany({
+                take : BATCH,
+                orderBy : {
+                    createdAt : "desc"
+                }
+            });
+        }
+
+        let nextCursor = null;
+        if ( chats.length===BATCH ) {
+            nextCursor = chats[BATCH-1].id
+        }
+
+        return NextResponse.json({
+            items : chats,
+            nextCursor
+        });
+
+    } catch (error) {
+        console.log("CHAT GET API ERROR", error);
+        return new NextResponse("Internal server error", {status: 500});
     }
 }

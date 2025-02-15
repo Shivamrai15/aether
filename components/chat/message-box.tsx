@@ -1,12 +1,15 @@
 "use client";
 
+import { v4 as uuidv4 } from "uuid";
+import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
 import {
     Form,
     FormControl,
     FormItem,
-    FormField
+    FormField,
+    FormMessage
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -21,18 +24,23 @@ interface MessageBoxProps {
 export const MessageBox = ({
     chatId
 }: MessageBoxProps  ) => {
-    
+
+    const queryClient = useQueryClient();
+
     const form = useForm<InputType>({
         resolver : zodResolver(InputSchema),
         defaultValues : {
             input : "",
-            chatId : chatId|| undefined
+            chatId : chatId|| uuidv4(),
+            newChat : chatId ? false : true
         }
     });
 
     const onSubmit = async(values: InputType)=>{
         try {
             
+            console.log("API Called");
+
             const response = await fetch("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -61,6 +69,10 @@ export const MessageBox = ({
                 }
             }
 
+            await queryClient.invalidateQueries({
+                queryKey : ["chats:all"]
+            });
+
         } catch (error) {
             console.log(error);
         }
@@ -85,6 +97,7 @@ export const MessageBox = ({
                                     {...field}
                                 />
                             </FormControl>
+                            <FormMessage/>
                         </FormItem>
                     )}
                 />
