@@ -1,8 +1,6 @@
 "use client";
 
-import { v4 as uuidv4 } from 'uuid';
 import { useForm } from "react-hook-form";
-import axios from "axios";
 
 import {
     Form,
@@ -28,15 +26,40 @@ export const MessageBox = ({
         resolver : zodResolver(InputSchema),
         defaultValues : {
             input : "",
-            chatId : chatId|| uuidv4()
+            chatId : chatId|| undefined
         }
     });
 
     const onSubmit = async(values: InputType)=>{
         try {
             
-            const response = await axios.post("/api/chat", values);
-            console.log(response.data);
+            const response = await fetch("/api/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(values),
+            });
+          
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+          
+            if (!response.body) {
+                console.error("ReadableStream not supported in this browser.");
+                return;
+            }
+          
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder("utf-8");
+            let done = false;
+          
+            while (!done) {
+                const { value, done: doneReading } = await reader.read();
+                done = doneReading;
+                if (value) {
+                    const chunk = decoder.decode(value, { stream: true });
+                    console.log("Received chunk:", chunk);
+                }
+            }
 
         } catch (error) {
             console.log(error);

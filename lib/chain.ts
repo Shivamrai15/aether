@@ -4,9 +4,10 @@ import { RunnableSequence } from "@langchain/core/runnables";
 import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
 
 import { db } from "./db";
+import { Message, Role } from "@prisma/client";
 
 
-export const createChain = async (chatId: string) => {
+export const createChain = async (chatId?: string) => {
     
     const model = new ChatOllama({
         // Need to be updated according to the downloaded models 
@@ -20,15 +21,21 @@ export const createChain = async (chatId: string) => {
         ["human", "{input}"],
     ]);
 
-    const existingMessages = await db.messages
-      .where('chatId')
-      .equals(chatId)
-      .sortBy('timestamp');
-
+    let existingMessages : Message[] = [];
+    if (chatId) {
+        existingMessages = await db.message.findMany({
+            where : {
+                chatId : chatId
+            },
+            orderBy : {
+                timestamp : "asc"
+            }
+        })
+    }
     const chatHistory = new ChatMessageHistory();
   
     existingMessages.forEach(message => {
-        if (message.role === 'user') {
+        if (message.role === Role.USER) {
             chatHistory.addUserMessage(message.content);
         } else {
             chatHistory.addAIMessage(message.content);
