@@ -6,19 +6,18 @@ import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts
 import { db } from "./db";
 
 
-
-export const createChain = async (chatId: string, input: string) => {
+export const createChain = async (chatId: string) => {
     
     const model = new ChatOllama({
         // Need to be updated according to the downloaded models 
-        model: "deepseek-r1", 
+        model: "deepseek-r1:1.5b", 
         temperature: 0.7,
     });
   
     const prompt = ChatPromptTemplate.fromMessages([
         ["system", "You are a helpful AI assistant called Eather."],
         new MessagesPlaceholder("chat_history"),
-        ["human", input],
+        ["human", "{input}"],
     ]);
 
     const existingMessages = await db.messages

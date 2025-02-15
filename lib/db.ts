@@ -1,18 +1,8 @@
-import { Chat, Message } from '@/types';
-import Dexie from 'dexie';
+import { PrismaClient } from "@prisma/client";
 
-export class ChatDB extends Dexie {
-    chats!: Dexie.Table<Chat, string>;
-    messages!: Dexie.Table<Message, string>;
-    
-    constructor() {
-        super('ChatDatabase');
-        
-        this.version(1).stores({
-            chats: 'id, title, createdAt',
-            messages: 'id, chatId, content, role, timestamp'
-        });
-    }
+declare global {
+    var prisma : PrismaClient| undefined;
 }
-  
-  export const db = new ChatDB();
+
+const db = globalThis.prisma || new PrismaClient();
+if ( process.env.NODE_ENV !== "production" ) globalThis.prisma = db;
