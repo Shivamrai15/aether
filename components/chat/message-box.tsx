@@ -1,6 +1,7 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { v4 as uuidv4} from "uuid";
 import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -19,16 +20,20 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { InputType, InputSchema } from "@/schemas/input.schema";
 import { useMessage } from "@/hooks/use-message";
 import { Role } from "@prisma/client";
+import { useThinking } from "@/hooks/use-thinking";
 
 
 export const MessageBox = () => {
 
     const params = useParams();
-    const router = useRouter()
+    const router = useRouter();
+    const pathname = usePathname();
     const queryClient = useQueryClient();
+
     const { createMessage, updateMessage } = useMessage();
+    const { setLoadingId } = useThinking();
     
-    const chatId = params["chatId"] as string;
+    const [chatId, setChatId] = useState(params["chatId"] as string ||"");
 
     const form = useForm<InputType>({
         resolver : zodResolver(InputSchema),
@@ -38,6 +43,25 @@ export const MessageBox = () => {
             newChat : chatId ? false : true
         }
     });
+
+    useEffect(()=>{
+        const id = params["chatId"] as string | undefined;
+        if (id) {
+            setChatId(id);
+            form.reset({
+                input: "",
+                chatId: id,
+                newChat: false
+            });
+        } else {
+            setChatId("");
+            form.reset({
+                input: "",
+                chatId: uuidv4(),
+                newChat: true
+            });
+        }
+    }, [pathname, params]);
 
     const { isValid, isSubmitting } = form.formState;
 
@@ -57,13 +81,17 @@ export const MessageBox = () => {
                 timestamp : new Date()
             });
 
+            const aiMessageId = uuidv4();
+
             createMessage({
-                id : uuidv4(),
+                id : aiMessageId,
                 chatId : values.chatId,
                 content : "",
                 role : Role.ASSISTANT,
                 timestamp : new Date(Date.now()+50)
             });
+
+            setLoadingId(values.chatId);
 
             const response = await fetch("/api/chat", {
                 method: "POST",
@@ -82,18 +110,20 @@ export const MessageBox = () => {
             const reader = response.body.getReader();
             const decoder = new TextDecoder("utf-8");
             let done = false;
+
+            setLoadingId("");
+            queryClient.invalidateQueries({
+                queryKey : ["chat:get"]
+            });
+
             while (!done) {
                 const { value, done: doneReading } = await reader.read();
                 done = doneReading;
                 if (value) {
                     const chunk = decoder.decode(value, { stream: true });
-                    updateMessage(chunk, values.chatId);
+                    updateMessage(chunk, aiMessageId ,values.chatId);
                 }
             }
-
-            await queryClient.invalidateQueries({
-                queryKey : ["chat:get"]
-            });
 
             form.reset();
 
@@ -101,7 +131,6 @@ export const MessageBox = () => {
             console.log(error);
         }
     }
-
 
     return (
         <Form {...form} >
@@ -116,7 +145,7 @@ export const MessageBox = () => {
                         <FormItem>
                             <FormControl>
                                 <Textarea
-                                    className="min-h-20 h-auto max-h-36 font-medium overflow-auto bg-transparent outline-none focus-visible:ring-0 focus-visible:ring-offset-0 resize-none text-zinc-100"
+                                    className="min-h-20 h-auto max-h-36 font-medium text-base overflow-auto bg-transparent outline-none focus-visible:ring-0 focus-visible:ring-offset-0 resize-none text-zinc-100"
                                     placeholder="Message Aether"
                                     {...field}
                                 />

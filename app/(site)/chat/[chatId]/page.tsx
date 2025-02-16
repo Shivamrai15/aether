@@ -24,7 +24,7 @@ const Page = async({
     }
 
     return (
-        <div className="h-full w-full max-w-3xl mx-auto px-8 pt-20 pb-10 flex flex-col gap-y-10 scroll-smooth">
+        <div className="h-full w-full max-w-3xl mx-auto px-8 pt-20 pb-10 flex flex-col gap-y-10">
             {
                 previousMessages.map((message)=>(
                     message.role === "USER"

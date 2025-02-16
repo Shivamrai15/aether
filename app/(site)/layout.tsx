@@ -8,7 +8,7 @@ const Layout = ({ children } : LayoutProps) => {
     
     return (
         <div className="w-full h-full flex flex-col">
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto scroll-smooth">
                 {children}
             </div>
             <div className="max-w-3xl w-full px-6 mx-auto">
