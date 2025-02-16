@@ -14,6 +14,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Ellipsis, Trash2Icon } from "lucide-react";
+import { useModal } from "@/hooks/use-modal";
 
 interface ChatItemProps {
     chat: Chat
@@ -25,6 +26,7 @@ export const ChatItem = ({ chat }: ChatItemProps) => {
     const pathname = usePathname();
     const { clear } = useMessage()
     const isActive = pathname.includes(chat.id);
+    const { setChatId } = useModal();
     
 
     return (
@@ -48,6 +50,10 @@ export const ChatItem = ({ chat }: ChatItemProps) => {
                     "hidden group-hover/item:block transition-all duration-300 outline-none",
                     isActive && "block"
                 )}
+                onClick={(e)=>{
+                    e.stopPropagation();
+                    setChatId(chat.id);
+                }}
             >
                 <Trash2Icon className="size-4"/>
             </button>

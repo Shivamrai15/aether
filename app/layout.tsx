@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/providers/theme.provider";
 import { AppWrapper } from "@/components/app/app-wrapper";
 import { QueryProvider } from "@/providers/query.provider";
+import { ModalProvider } from "@/providers/modal.provider";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -37,6 +38,7 @@ export default function RootLayout({
                     disableTransitionOnChange
                 >
                     <QueryProvider>
+                        <ModalProvider/>
                         <AppWrapper>
                             {children}
                         </AppWrapper>
