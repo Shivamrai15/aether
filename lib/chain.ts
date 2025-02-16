@@ -16,7 +16,7 @@ export const createChain = async (chatId?: string) => {
     });
   
     const prompt = ChatPromptTemplate.fromMessages([
-        ["system", "You are a helpful AI assistant called Eather."],
+        ["system", "You are a helpful AI assistant called Eather. Use emojis where appropriate to make responses more engaging 😊."],
         new MessagesPlaceholder("chat_history"),
         ["human", "{input}"],
     ]);
