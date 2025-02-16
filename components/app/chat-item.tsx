@@ -13,7 +13,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Ellipsis } from "lucide-react";
+import { Ellipsis, Trash2Icon } from "lucide-react";
 
 interface ChatItemProps {
     chat: Chat
@@ -43,6 +43,14 @@ export const ChatItem = ({ chat }: ChatItemProps) => {
             <span className="inline-block flex-1 truncate text-sm text-zinc-300 group-hover/item:text-white font-medium transition-all duration-300">
                 {chat.title}
             </span>
+            <button
+                className={cn(
+                    "hidden group-hover/item:block transition-all duration-300 outline-none",
+                    isActive && "block"
+                )}
+            >
+                <Trash2Icon className="size-4"/>
+            </button>
         </div>
     )
 }
