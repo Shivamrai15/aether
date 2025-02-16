@@ -11,10 +11,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { PencilIcon, Search } from "lucide-react";
 import { SidebarItems } from "./sidebar-items";
+import { useRouter } from "next/navigation";
 
 
 export const AppSidebar = () => {
     
+    const router = useRouter();
+
     return (
         <Sidebar className="bg-[#0e0e0e] h-full">
             <SidebarHeader className="bg-[#0e0e0e] flex flex-row items-center justify-between" >
@@ -31,6 +34,7 @@ export const AppSidebar = () => {
                         className="size-9 p-1.5 text-zinc-400"
                         variant="ghost"
                         size="icon"
+                        onClick={()=>router.push("/")}
                     >
                         <PencilIcon className="size-5" />
                     </Button>

@@ -9,6 +9,16 @@ body,
   height: 100%;
 }
 
+@media screen and ( min-width : 720px ) {
+  ::-webkit-scrollbar{
+    background: #00000000;
+    width: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #ffffff53;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

@@ -21,9 +21,9 @@ export const AppWrapper = ({
             className="h-full w-full"
         >
             <AppSidebar />
-            <div className="h-full bg-neutral-900 w-full px-6 relative">
+            <div className="h-full bg-neutral-900 w-full relative">
                 <AppHeader/>
-                <main className="h-full w-full max-w-2xl mx-auto">
+                <main className="h-full w-full">
                     {children}
                 </main>
             </div>

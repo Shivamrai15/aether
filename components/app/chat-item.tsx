@@ -17,9 +17,9 @@ export const ChatItem = ({ chat }: ChatItemProps) => {
     
     return (
         <Link
-            href={`/chat/${chat.id}`}
+            href={`/chat/${chat.id}?chat=recent`}
             className={cn(
-                "w-full p-1.5 px-2 overflow-hidden flex items-center justify-between gap-3 hover:bg-neutral-800/70 rounded-lg group/item transition-all duration-300",
+                "w-full p-1.5 px-2 overflow-hidden flex items-center justify-between gap-3 hover:bg-neutral-800/60 rounded-lg group/item transition-all duration-300",
                 isActive && "bg-neutral-800 hover:bg-neutral-800"
             )}
         >
