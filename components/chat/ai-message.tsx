@@ -27,7 +27,7 @@ export const AIMessage = ({ message } : AIMessageProps ) => {
     return (
         <div className="w-full pb-6">
             <ReactMarkdown 
-                className='text-zinc-100 leading-relaxed flex flex-col gap-y-5 selection:bg-ne'
+                className='text-zinc-100 leading-relaxed flex flex-col gap-y-5 selection:bg-neutral-50 selection:text-zinc-900'
                 components={{
                     code({ node, className, children, ...props }) {
                         const match = /language-(\w+)/.exec(className || '');
@@ -38,7 +38,7 @@ export const AIMessage = ({ message } : AIMessageProps ) => {
                             />
                         ) : (
                             <div className='py-2 max-md:overflow-x-auto inline'>
-                                <code className={`bg-red-500/20 text-red-100 px-1 rounded-sm ${className}`} {...props}>
+                                <code className={`bg-zinc-500/40 text-zinc-100 px-1 rounded-sm ${className}`} {...props}>
                                     {children}
                                 </code>
                             </div>

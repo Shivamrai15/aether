@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { v4 as uuidv4} from "uuid";
 import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -17,12 +17,16 @@ import { HiPaperAirplane } from "react-icons/hi2";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { InputType, InputSchema } from "@/schemas/input.schema";
+import { useMessage } from "@/hooks/use-message";
+import { Role } from "@prisma/client";
 
 
 export const MessageBox = () => {
 
     const params = useParams();
+    const router = useRouter()
     const queryClient = useQueryClient();
+    const { createMessage, updateMessage } = useMessage();
     
     const chatId = params["chatId"] as string;
 
@@ -40,6 +44,26 @@ export const MessageBox = () => {
 
     const onSubmit = async(values: InputType)=>{
         try {
+
+            if ( values.newChat ) {
+                router.push(`/chat/${values.chatId}`);
+            }
+
+            createMessage({
+                id : uuidv4(),
+                chatId : values.chatId,
+                content : values.input,
+                role : Role.USER,
+                timestamp : new Date()
+            });
+
+            createMessage({
+                id : uuidv4(),
+                chatId : values.chatId,
+                content : "",
+                role : Role.ASSISTANT,
+                timestamp : new Date(Date.now()+50)
+            });
 
             const response = await fetch("/api/chat", {
                 method: "POST",
@@ -63,13 +87,15 @@ export const MessageBox = () => {
                 done = doneReading;
                 if (value) {
                     const chunk = decoder.decode(value, { stream: true });
-                    console.log("Received chunk:", chunk);
+                    updateMessage(chunk, values.chatId);
                 }
             }
 
             await queryClient.invalidateQueries({
                 queryKey : ["chat:get"]
             });
+
+            form.reset();
 
         } catch (error) {
             console.log(error);

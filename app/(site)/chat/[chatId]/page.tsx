@@ -1,5 +1,6 @@
 
 import { AIMessage } from "@/components/chat/ai-message";
+import { CurrentMessages } from "@/components/chat/current-messages";
 import { UserMessage } from "@/components/chat/user-message";
 import { getMessagesByChatId } from "@/server/chat";
 import { Message } from "@prisma/client";
@@ -23,7 +24,7 @@ const Page = async({
     }
 
     return (
-        <div className="h-full w-full max-w-3xl mx-auto px-8 pt-20 flex flex-col gap-y-10">
+        <div className="h-full w-full max-w-3xl mx-auto px-8 pt-20 pb-10 flex flex-col gap-y-10 scroll-smooth">
             {
                 previousMessages.map((message)=>(
                     message.role === "USER"
@@ -31,6 +32,7 @@ const Page = async({
                     : (<AIMessage key={message.id} message={message} />)
                 ))
             }
+            <CurrentMessages chatId={chatId} />
         </div>
     )
 }
