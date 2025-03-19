@@ -80,6 +80,7 @@ This project is licensed under the MIT License.
 ## Acknowledgments
 
 - [Next.js](https://nextjs.org/)
+- [TailwindCSS](https://tailwindcss.com/)
 - [Prisma](https://www.prisma.io/)
 - [PostgreSQL](https://www.postgresql.org/)
 - [LangChain](https://www.langchain.com/)
