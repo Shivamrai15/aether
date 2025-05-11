@@ -126,7 +126,7 @@ export const SidebarItems = () => {
                 Object.entries(monthly).map(([month, chats])=>(
                     chats.length > 0
                     ? (
-                        <SidebarGroup>
+                        <SidebarGroup key={month} >
                             <h2 className="px-2 text-xs font-semibold w-full mb-2">{month}</h2>
                             {
                                 chats.map((chat)=>(

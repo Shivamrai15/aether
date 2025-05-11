@@ -1,22 +1,28 @@
 
+import { Metadata } from "next";
+import { Message } from "@prisma/client";
 import { AIMessage } from "@/components/chat/ai-message";
 import { CurrentMessages } from "@/components/chat/current-messages";
 import { UserMessage } from "@/components/chat/user-message";
 import { getMessagesByChatId } from "@/server/chat";
-import { Message } from "@prisma/client";
+
 
 interface PageProps {
     params : { chatId : string };
-    searchParams : { chat: string|undefined }
+    searchParams: {
+        [key: string]: string | string[] | undefined;
+    };
 }
+
+
 
 const Page = async({
     params,
     searchParams
 }: PageProps ) => {
     
-    const { chatId } = await params;
-    const { chat : chatQuery } = await searchParams;
+    const { chatId } = params;
+    const chatQuery = searchParams.chat as string | undefined;
     let previousMessages : Message[] = [];
     
     if (chatQuery && chatQuery === "recent") {
