@@ -28,9 +28,19 @@ export const Code = ({
         <div className='relative py-6'>
             <div className='overflow-x-auto rounded-md'>
                 <SyntaxHighlighter
-                    style={vscDarkPlus}
-                    language={language}
-                    PreTag="div"
+                    language="typescript"
+                    style={{
+                        ...vscDarkPlus,
+                        'pre[class*="language-"]' : {
+                            ...vscDarkPlus['pre[class*="language-"]'],
+                            fontSize: "15px"
+                            
+                        },
+                        'code[class*="language-"]' : {
+                            ...vscDarkPlus['code[class*="language-"]'],
+                            fontSize: "15px"
+                        }
+                    }}
                 >
                     {code}
                 </SyntaxHighlighter>

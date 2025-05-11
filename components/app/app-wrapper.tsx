@@ -4,29 +4,29 @@ import {
     SidebarProvider,
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "./app-sidebar";
-import { AppHeader } from "./app-header";
+import { ListResponse } from "ollama";
+import { MainContent } from "./main-content";
 
 
 interface AppWrapper {
     children: React.ReactNode;
+    models : ListResponse
 }
 
 
 export const AppWrapper = ({
-    children
+    children,
+    models
 }: AppWrapper) => {
 
     return (
         <SidebarProvider
-            className="h-full w-full"
+            className="h-full w-full flex"
         >
             <AppSidebar />
-            <div className="h-full bg-neutral-900 w-full relative">
-                <AppHeader/>
-                <main className="h-full w-full">
-                    {children}
-                </main>
-            </div>
+            <MainContent models={models} >
+                {children}
+            </MainContent>
         </SidebarProvider>
     )
 }

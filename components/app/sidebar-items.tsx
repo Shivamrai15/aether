@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import qs from "query-string";
+import { useInView } from "react-intersection-observer";
 import { AlertTriangle, Loader } from "lucide-react";
 import { groupChatsByDate } from "@/lib/chats";
 import { SidebarGroup } from "@/components/ui/sidebar";
@@ -29,6 +31,14 @@ export const SidebarItems = () => {
         getNextPageParam: (lastPage)=>lastPage?.nextCursor,
         refetchInterval : false
     });
+
+    const { ref, inView } = useInView();
+
+    useEffect(()=>{
+        if (inView && hasNextPage) {
+            fetchNextPage();
+        }
+    }, [inView, hasNextPage]);
 
     if (isPending) {
         return (
@@ -131,6 +141,7 @@ export const SidebarItems = () => {
                     : null
                 ))
             }
+            <div className="h-4" ref={ref} />
         </div>
     )
 }

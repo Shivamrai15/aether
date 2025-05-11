@@ -69,6 +69,8 @@ export const MessageBox = () => {
     const onSubmit = async(values: InputType)=>{
         try {
 
+            form.reset();
+
             if ( values.newChat ) {
                 router.push(`/chat/${values.chatId}`);
             }
@@ -125,8 +127,6 @@ export const MessageBox = () => {
                 }
             }
 
-            form.reset();
-
         } catch (error) {
             console.log(error);
         }
@@ -135,7 +135,7 @@ export const MessageBox = () => {
     return (
         <Form {...form} >
             <form
-                className='w-full bg-neutral-800 p-1 rounded-2xl transition-all duration-300'
+                className='w-full bg-neutral-800 p-1 rounded-3xl transition-all duration-300 ring-1 ring-neutral-700'
                 onSubmit={form.handleSubmit(onSubmit)}
             >
                 <FormField
@@ -150,7 +150,6 @@ export const MessageBox = () => {
                                     {...field}
                                 />
                             </FormControl>
-                            <FormMessage/>
                         </FormItem>
                     )}
                 />
