@@ -10,12 +10,12 @@ import { Message, Role } from "@prisma/client";
  * Creates and returns a chain for processing chat messages.
  * Optionally loads existing chat history from the database using a given chatId.
  */
-export const createChain = async (chatId?: string) => {
+export const createChain = async (chatId?: string, modelName?: string) => {
     
     // Initialize the ChatOllama model with the specified parameters.
     const model = new ChatOllama({
         // Update according to the downloaded models 
-        model: "qwen3:latest", 
+        model: modelName, 
         temperature: 0.5,
     });
   

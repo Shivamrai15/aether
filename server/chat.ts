@@ -1,5 +1,3 @@
-"use server";
-
 import { db } from "@/lib/db";
 
 export const getMessagesByChatId =  async(chatId: string)=> {

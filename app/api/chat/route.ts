@@ -17,8 +17,8 @@ export async function POST ( req: Request ) {
             return new NextResponse("Invalid input fields", {status: 401});
         }
 
-        const { chatId, input, newChat } = validatedData.data;
-        const chain = await createChain(chatId);
+        const { chatId, input, newChat, model } = validatedData.data;
+        const chain = await createChain(chatId, model);
 
         if (newChat) {
             await db.chat.create({
@@ -34,6 +34,7 @@ export async function POST ( req: Request ) {
                 chatId : chatId,
                 content : input,
                 role : Role.USER,
+                model : model,
             }
         });
 
@@ -52,7 +53,8 @@ export async function POST ( req: Request ) {
                     data : {
                         chatId : chatId,
                         content : aiMessage,
-                        role : Role.ASSISTANT
+                        role : Role.ASSISTANT,
+                        model : model,
                     }
                 });
 
@@ -110,6 +112,34 @@ export async function GET ( req: Request ) {
         return NextResponse.json({
             items : chats,
             nextCursor
+        });
+
+    } catch (error) {
+        console.log("CHAT GET API ERROR", error);
+        return new NextResponse("Internal server error", {status: 500});
+    }
+}
+
+
+export async function DELETE ( req: Request ) {
+    try {
+        
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get("id");
+
+        if (!id) {
+            return new NextResponse("Chat Id is required", {status: 401});
+        }
+
+        await db.chat.delete({
+            where : {
+                id : id
+            }
+        }) 
+
+        return NextResponse.json({
+            success : true,
+            message : "Chat deleted successfully"
         });
 
     } catch (error) {

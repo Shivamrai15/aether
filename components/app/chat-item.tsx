@@ -5,15 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Chat } from "@prisma/client";
 import { useMessage } from "@/hooks/use-message";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Ellipsis, Trash2Icon } from "lucide-react";
+import { Trash2Icon } from "lucide-react";
 import { useModal } from "@/hooks/use-modal";
 
 interface ChatItemProps {

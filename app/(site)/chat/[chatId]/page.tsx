@@ -1,5 +1,4 @@
-
-import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { Message } from "@prisma/client";
 import { AIMessage } from "@/components/chat/ai-message";
 import { CurrentMessages } from "@/components/chat/current-messages";
@@ -8,10 +7,10 @@ import { getMessagesByChatId } from "@/server/chat";
 
 
 interface PageProps {
-    params : { chatId : string };
-    searchParams: {
-        [key: string]: string | string[] | undefined;
-    };
+    params : Promise<{ chatId : string|undefined }>;
+    searchParams: Promise<{
+        chat : string | undefined | string[];
+    }>;
 }
 
 
@@ -21,8 +20,11 @@ const Page = async({
     searchParams
 }: PageProps ) => {
     
-    const { chatId } = params;
-    const chatQuery = searchParams.chat as string | undefined;
+    const { chatId } = await params;
+    if (!chatId) {
+        notFound();
+    }
+    const chatQuery = (await searchParams).chat as string | undefined;
     let previousMessages : Message[] = [];
     
     if (chatQuery && chatQuery === "recent") {

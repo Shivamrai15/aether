@@ -29,7 +29,7 @@ export const Modal = () => {
     const handleDelete = async()=>{
         try {
             setLoading(true);
-            await axios.delete(`/api/chat/${chatId}`);
+            await axios.delete(`/api/chat?id=${chatId}`);
             queryClient.invalidateQueries({
                 queryKey : ["chat:get"]
             });

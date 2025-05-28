@@ -25,5 +25,6 @@ model Message {
   chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
   content   String   @db.Text
   role      Role
+  model     String
   timestamp DateTime @default(now())
 }

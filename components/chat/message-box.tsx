@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { v4 as uuidv4} from "uuid";
 import { useQueryClient } from "@tanstack/react-query";
@@ -11,7 +11,6 @@ import {
     FormControl,
     FormItem,
     FormField,
-    FormMessage
 } from "@/components/ui/form";
 import { Button } from '@/components/ui/button';
 import { HiPaperAirplane } from "react-icons/hi2";
@@ -21,6 +20,7 @@ import { InputType, InputSchema } from "@/schemas/input.schema";
 import { useMessage } from "@/hooks/use-message";
 import { Role } from "@prisma/client";
 import { useThinking } from "@/hooks/use-thinking";
+import { useModel } from "@/hooks/use-models";
 
 
 export const MessageBox = () => {
@@ -29,6 +29,8 @@ export const MessageBox = () => {
     const router = useRouter();
     const pathname = usePathname();
     const queryClient = useQueryClient();
+    const { currentModel } = useModel();
+    const textareaRef = useRef<HTMLTextAreaElement>(null)
 
     const { createMessage, updateMessage } = useMessage();
     const { setLoadingId } = useThinking();
@@ -40,7 +42,8 @@ export const MessageBox = () => {
         defaultValues : {
             input : "",
             chatId : chatId || uuidv4(),
-            newChat : chatId ? false : true
+            newChat : chatId ? false : true,
+            model : currentModel
         }
     });
 
@@ -51,19 +54,22 @@ export const MessageBox = () => {
             form.reset({
                 input: "",
                 chatId: id,
-                newChat: false
+                newChat: false,
+                model : currentModel
             });
         } else {
             setChatId("");
             form.reset({
                 input: "",
                 chatId: uuidv4(),
-                newChat: true
+                newChat: true,
+                model : currentModel
             });
         }
     }, [pathname, params]);
 
     const { isValid, isSubmitting } = form.formState;
+    console.log(form.watch());
 
 
     const onSubmit = async(values: InputType)=>{
@@ -80,7 +86,8 @@ export const MessageBox = () => {
                 chatId : values.chatId,
                 content : values.input,
                 role : Role.USER,
-                timestamp : new Date()
+                timestamp : new Date(),
+                model : currentModel
             });
 
             const aiMessageId = uuidv4();
@@ -90,7 +97,8 @@ export const MessageBox = () => {
                 chatId : values.chatId,
                 content : "",
                 role : Role.ASSISTANT,
-                timestamp : new Date(Date.now()+50)
+                timestamp : new Date(Date.now()+50),
+                model : currentModel
             });
 
             setLoadingId(values.chatId);
@@ -132,6 +140,22 @@ export const MessageBox = () => {
         }
     }
 
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault()
+            form.handleSubmit(onSubmit)();
+        }
+    }
+
+    useEffect(() => {
+        if (textareaRef.current) {
+        textareaRef.current.style.height = "auto"
+        textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`
+        }
+    }, [form.watch("input")]);
+
+
+
     return (
         <Form {...form} >
             <form
@@ -145,27 +169,26 @@ export const MessageBox = () => {
                         <FormItem>
                             <FormControl>
                                 <Textarea
-                                    className="min-h-20 h-auto max-h-36 font-medium text-base overflow-auto bg-transparent outline-none focus-visible:ring-0 focus-visible:ring-offset-0 resize-none text-zinc-100"
+                                    className="min-h-8 max-h-36 font-medium text-base overflow-auto bg-transparent outline-none focus-visible:ring-0 focus-visible:ring-offset-0 resize-none text-zinc-100"
                                     placeholder="Message Aether"
                                     {...field}
+                                    disabled={!currentModel}
+                                    ref={textareaRef}
+                                    onKeyDown={handleKeyDown}
                                 />
                             </FormControl>
                         </FormItem>
                     )}
                 />
                 <div className='flex items-center justify-end p-3'>
-                    {
-                       isValid && (
-                            <Button 
-                                type="submit"
-                                size="icon"
-                                className="rounded-full shadow-md shadow-neutral-900"
-                                disabled={!isValid || isSubmitting}
-                            >
-                                <HiPaperAirplane className="size-5"/>
-                            </Button>
-                        ) 
-                    }
+                    <Button 
+                        type="submit"
+                        size="icon"
+                        className="rounded-full shadow-md shadow-neutral-900"
+                        disabled={!isValid || isSubmitting || !currentModel}
+                    >
+                        <HiPaperAirplane className="size-5"/>
+                    </Button>
                 </div>
             </form>
         </Form>
