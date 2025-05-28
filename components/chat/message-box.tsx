@@ -48,6 +48,12 @@ export const MessageBox = () => {
     });
 
     useEffect(()=>{
+        if (currentModel) {
+            form.setValue("model", currentModel);
+        }
+    }, [currentModel, form]);
+
+    useEffect(()=>{
         const id = params["chatId"] as string | undefined;
         if (id) {
             setChatId(id);
@@ -153,6 +159,8 @@ export const MessageBox = () => {
         textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`
         }
     }, [form.watch("input")]);
+
+    console.log(form.watch())
 
 
 
