@@ -33,12 +33,13 @@ export const Code = ({
                         ...vscDarkPlus,
                         'pre[class*="language-"]' : {
                             ...vscDarkPlus['pre[class*="language-"]'],
-                            fontSize: "15px"
-                            
+                            fontSize: "15px",
+                            borderRadius: "0.375rem",
                         },
                         'code[class*="language-"]' : {
                             ...vscDarkPlus['code[class*="language-"]'],
-                            fontSize: "15px"
+                            fontSize: "15px",
+                            borderRadius: "0.375rem",
                         }
                     }}
                 >

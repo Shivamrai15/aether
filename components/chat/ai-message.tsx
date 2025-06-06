@@ -79,7 +79,7 @@ export const AIMessage = ({ message } : AIMessageProps ) => {
                 {formattedContent}
             </ReactMarkdown>
             <div>
-                
+                <p className="text-xs text-zinc-400 mt-2 px-2 py-1 bg-neutral-800 w-fit rounded-2xl font-medium">{message.model}</p>
             </div>
         </div>
     )

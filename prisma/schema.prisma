@@ -12,8 +12,14 @@ enum Role {
   ASSISTANT
 }
 
+enum ChatType {
+  TEXT
+  EMBEDDING
+}
+
 model Chat {
   id        String    @id @default(uuid())
+  type      ChatType
   title     String
   messages  Message[]
   createdAt DateTime  @default(now())

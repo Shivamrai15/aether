@@ -24,7 +24,8 @@ export async function POST ( req: Request ) {
             await db.chat.create({
                 data : {
                     id: chatId,
-                    title : input
+                    title : input,
+                    type : "TEXT"
                 }
             });
         }

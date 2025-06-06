@@ -31,7 +31,7 @@ export const ChatItem = ({ chat }: ChatItemProps) => {
             role="button"
             onClick={()=>{
                 clear();
-                router.push(`/chat/${chat.id}?chat=recent`);
+                router.push(`/${chat.type==="TEXT"?'c':'e'}/${chat.id}?chat=recent`);
             }}
         >
             <span className="inline-block flex-1 truncate text-sm text-zinc-300 group-hover/item:text-white font-medium transition-all duration-300">
